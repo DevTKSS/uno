@@ -3,13 +3,13 @@
 #pragma warning disable 114 // new keyword hiding
 namespace Microsoft.UI.Composition.Effects
 {
-#if __ANDROID__ || __IOS__ || IS_UNIT_TESTS || __WASM__ || __SKIA__ || __NETSTD_REFERENCE__ || __MACOS__
+#if __ANDROID__ || __IOS__ || __TVOS__ || IS_UNIT_TESTS || __WASM__ || __SKIA__ || __NETSTD_REFERENCE__
 	[global::Uno.NotImplemented]
 #endif
 	public partial class SceneLightingEffect : global::Windows.Graphics.Effects.IGraphicsEffect
 	{
-#if __ANDROID__ || __IOS__ || IS_UNIT_TESTS || __WASM__ || __SKIA__ || __NETSTD_REFERENCE__ || __MACOS__
-		[global::Uno.NotImplemented("__ANDROID__", "__IOS__", "IS_UNIT_TESTS", "__WASM__", "__SKIA__", "__NETSTD_REFERENCE__", "__MACOS__")]
+#if __ANDROID__ || __IOS__ || __TVOS__ || IS_UNIT_TESTS || __WASM__ || __SKIA__ || __NETSTD_REFERENCE__
+		[global::Uno.NotImplemented("__ANDROID__", "__IOS__", "__TVOS__", "IS_UNIT_TESTS", "__WASM__", "__SKIA__", "__NETSTD_REFERENCE__")]
 		public float SpecularShine
 		{
 			get
@@ -22,8 +22,8 @@ namespace Microsoft.UI.Composition.Effects
 			}
 		}
 #endif
-#if __ANDROID__ || __IOS__ || IS_UNIT_TESTS || __WASM__ || __SKIA__ || __NETSTD_REFERENCE__ || __MACOS__
-		[global::Uno.NotImplemented("__ANDROID__", "__IOS__", "IS_UNIT_TESTS", "__WASM__", "__SKIA__", "__NETSTD_REFERENCE__", "__MACOS__")]
+#if __ANDROID__ || __IOS__ || __TVOS__ || IS_UNIT_TESTS || __WASM__ || __SKIA__ || __NETSTD_REFERENCE__
+		[global::Uno.NotImplemented("__ANDROID__", "__IOS__", "__TVOS__", "IS_UNIT_TESTS", "__WASM__", "__SKIA__", "__NETSTD_REFERENCE__")]
 		public float SpecularAmount
 		{
 			get
@@ -36,8 +36,8 @@ namespace Microsoft.UI.Composition.Effects
 			}
 		}
 #endif
-#if __ANDROID__ || __IOS__ || IS_UNIT_TESTS || __WASM__ || __SKIA__ || __NETSTD_REFERENCE__ || __MACOS__
-		[global::Uno.NotImplemented("__ANDROID__", "__IOS__", "IS_UNIT_TESTS", "__WASM__", "__SKIA__", "__NETSTD_REFERENCE__", "__MACOS__")]
+#if __ANDROID__ || __IOS__ || __TVOS__ || IS_UNIT_TESTS || __WASM__ || __SKIA__ || __NETSTD_REFERENCE__
+		[global::Uno.NotImplemented("__ANDROID__", "__IOS__", "__TVOS__", "IS_UNIT_TESTS", "__WASM__", "__SKIA__", "__NETSTD_REFERENCE__")]
 		public global::Windows.Graphics.Effects.IGraphicsEffectSource NormalMapSource
 		{
 			get
@@ -50,8 +50,8 @@ namespace Microsoft.UI.Composition.Effects
 			}
 		}
 #endif
-#if __ANDROID__ || __IOS__ || IS_UNIT_TESTS || __WASM__ || __SKIA__ || __NETSTD_REFERENCE__ || __MACOS__
-		[global::Uno.NotImplemented("__ANDROID__", "__IOS__", "IS_UNIT_TESTS", "__WASM__", "__SKIA__", "__NETSTD_REFERENCE__", "__MACOS__")]
+#if __ANDROID__ || __IOS__ || __TVOS__ || IS_UNIT_TESTS || __WASM__ || __SKIA__ || __NETSTD_REFERENCE__
+		[global::Uno.NotImplemented("__ANDROID__", "__IOS__", "__TVOS__", "IS_UNIT_TESTS", "__WASM__", "__SKIA__", "__NETSTD_REFERENCE__")]
 		public float DiffuseAmount
 		{
 			get
@@ -64,8 +64,8 @@ namespace Microsoft.UI.Composition.Effects
 			}
 		}
 #endif
-#if __ANDROID__ || __IOS__ || IS_UNIT_TESTS || __WASM__ || __SKIA__ || __NETSTD_REFERENCE__ || __MACOS__
-		[global::Uno.NotImplemented("__ANDROID__", "__IOS__", "IS_UNIT_TESTS", "__WASM__", "__SKIA__", "__NETSTD_REFERENCE__", "__MACOS__")]
+#if __ANDROID__ || __IOS__ || __TVOS__ || IS_UNIT_TESTS || __WASM__ || __SKIA__ || __NETSTD_REFERENCE__
+		[global::Uno.NotImplemented("__ANDROID__", "__IOS__", "__TVOS__", "IS_UNIT_TESTS", "__WASM__", "__SKIA__", "__NETSTD_REFERENCE__")]
 		public float AmbientAmount
 		{
 			get
@@ -78,8 +78,8 @@ namespace Microsoft.UI.Composition.Effects
 			}
 		}
 #endif
-#if __ANDROID__ || __IOS__ || IS_UNIT_TESTS || __WASM__ || __SKIA__ || __NETSTD_REFERENCE__ || __MACOS__
-		[global::Uno.NotImplemented("__ANDROID__", "__IOS__", "IS_UNIT_TESTS", "__WASM__", "__SKIA__", "__NETSTD_REFERENCE__", "__MACOS__")]
+#if __ANDROID__ || __IOS__ || __TVOS__ || IS_UNIT_TESTS || __WASM__ || __SKIA__ || __NETSTD_REFERENCE__
+		[global::Uno.NotImplemented("__ANDROID__", "__IOS__", "__TVOS__", "IS_UNIT_TESTS", "__WASM__", "__SKIA__", "__NETSTD_REFERENCE__")]
 		public global::Microsoft.UI.Composition.Effects.SceneLightingEffectReflectanceModel ReflectanceModel
 		{
 			get
@@ -92,8 +92,8 @@ namespace Microsoft.UI.Composition.Effects
 			}
 		}
 #endif
-#if __ANDROID__ || __IOS__ || IS_UNIT_TESTS || __WASM__ || __SKIA__ || __NETSTD_REFERENCE__ || __MACOS__
-		[global::Uno.NotImplemented("__ANDROID__", "__IOS__", "IS_UNIT_TESTS", "__WASM__", "__SKIA__", "__NETSTD_REFERENCE__", "__MACOS__")]
+#if __ANDROID__ || __IOS__ || __TVOS__ || IS_UNIT_TESTS || __WASM__ || __SKIA__ || __NETSTD_REFERENCE__
+		[global::Uno.NotImplemented("__ANDROID__", "__IOS__", "__TVOS__", "IS_UNIT_TESTS", "__WASM__", "__SKIA__", "__NETSTD_REFERENCE__")]
 		public string Name
 		{
 			get
@@ -106,22 +106,22 @@ namespace Microsoft.UI.Composition.Effects
 			}
 		}
 #endif
-		// Forced skipping of method Microsoft.UI.Composition.Effects.SceneLightingEffect.Name.set
-		// Forced skipping of method Microsoft.UI.Composition.Effects.SceneLightingEffect.SpecularAmount.set
-		// Forced skipping of method Microsoft.UI.Composition.Effects.SceneLightingEffect.SpecularShine.get
 		// Forced skipping of method Microsoft.UI.Composition.Effects.SceneLightingEffect.SpecularShine.set
-		// Forced skipping of method Microsoft.UI.Composition.Effects.SceneLightingEffect.ReflectanceModel.get
 		// Forced skipping of method Microsoft.UI.Composition.Effects.SceneLightingEffect.ReflectanceModel.set
+		// Forced skipping of method Microsoft.UI.Composition.Effects.SceneLightingEffect.SpecularShine.get
 		// Forced skipping of method Microsoft.UI.Composition.Effects.SceneLightingEffect.Name.get
+		// Forced skipping of method Microsoft.UI.Composition.Effects.SceneLightingEffect.DiffuseAmount.get
+		// Forced skipping of method Microsoft.UI.Composition.Effects.SceneLightingEffect.SpecularAmount.get
+		// Forced skipping of method Microsoft.UI.Composition.Effects.SceneLightingEffect.ReflectanceModel.get
+		// Forced skipping of method Microsoft.UI.Composition.Effects.SceneLightingEffect.NormalMapSource.set
+		// Forced skipping of method Microsoft.UI.Composition.Effects.SceneLightingEffect.SpecularAmount.set
 		// Forced skipping of method Microsoft.UI.Composition.Effects.SceneLightingEffect.AmbientAmount.get
 		// Forced skipping of method Microsoft.UI.Composition.Effects.SceneLightingEffect.AmbientAmount.set
-		// Forced skipping of method Microsoft.UI.Composition.Effects.SceneLightingEffect.DiffuseAmount.get
+		// Forced skipping of method Microsoft.UI.Composition.Effects.SceneLightingEffect.Name.set
 		// Forced skipping of method Microsoft.UI.Composition.Effects.SceneLightingEffect.DiffuseAmount.set
 		// Forced skipping of method Microsoft.UI.Composition.Effects.SceneLightingEffect.NormalMapSource.get
-		// Forced skipping of method Microsoft.UI.Composition.Effects.SceneLightingEffect.NormalMapSource.set
-		// Forced skipping of method Microsoft.UI.Composition.Effects.SceneLightingEffect.SpecularAmount.get
-#if __ANDROID__ || __IOS__ || IS_UNIT_TESTS || __WASM__ || __SKIA__ || __NETSTD_REFERENCE__ || __MACOS__
-		[global::Uno.NotImplemented("__ANDROID__", "__IOS__", "IS_UNIT_TESTS", "__WASM__", "__SKIA__", "__NETSTD_REFERENCE__", "__MACOS__")]
+#if __ANDROID__ || __IOS__ || __TVOS__ || IS_UNIT_TESTS || __WASM__ || __SKIA__ || __NETSTD_REFERENCE__
+		[global::Uno.NotImplemented("__ANDROID__", "__IOS__", "__TVOS__", "IS_UNIT_TESTS", "__WASM__", "__SKIA__", "__NETSTD_REFERENCE__")]
 		public SceneLightingEffect()
 		{
 			global::Windows.Foundation.Metadata.ApiInformation.TryRaiseNotImplemented("Microsoft.UI.Composition.Effects.SceneLightingEffect", "SceneLightingEffect.SceneLightingEffect()");

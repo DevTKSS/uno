@@ -10,19 +10,18 @@ using Microsoft.UI.Xaml.Tests.Enterprise;
 using MUXControlsTestApp.Utilities;
 using System.Linq;
 using ToolTip = Microsoft.UI.Xaml.Controls.ToolTip;
-using System.Reflection.Metadata.Ecma335;
 using UIElement = Microsoft.UI.Xaml.UIElement;
+using Microsoft.UI.Xaml.Media.Imaging;
 
 #if HAS_UNO
 using DirectUI;
+
 #endif
 
 #if WINAPPSDK
 using Uno.UI.Extensions;
-#elif __IOS__
+#elif __APPLE_UIKIT__
 using UIKit;
-#elif __MACOS__
-using AppKit;
 #else
 using Uno.UI;
 #endif
@@ -439,6 +438,30 @@ namespace Private.Infrastructure
 #endif
 			}
 
+			internal static Task WaitForOpened(BitmapImage source)
+			{
+				var tcs = new TaskCompletionSource<bool>();
+
+				source.ImageOpened += (s, e) =>
+				{
+					tcs.TrySetResult(true);
+				};
+
+				source.ImageFailed += (s, e) =>
+				{
+					tcs.TrySetException(new Exception(e.ErrorMessage));
+				};
+
+#if HAS_UNO
+				if (source.IsOpened)
+				{
+					tcs.TrySetResult(true);
+				}
+#endif
+
+				return tcs.Task;
+			}
+
 #if HAS_UNO
 			internal async static Task<ToolTip> TestGetActualToolTip(UIElement element)
 			{
@@ -448,6 +471,33 @@ namespace Private.Infrastructure
 					toolTip = DXamlTestHooks.TestGetActualToolTip(element);
 				});
 				return toolTip;
+			}
+
+			public static void SetTestScaling(float scalingOverride)
+			{
+				WindowHelper.XamlRoot.VisualTree.RootScale.SetTestOverride(scalingOverride);
+			}
+
+			public static void UnsetTestScaling()
+			{
+				WindowHelper.XamlRoot.VisualTree.RootScale.SetTestOverride(0.0f);
+			}
+
+			internal static Task WaitForOpened(ImageBrush source)
+			{
+				var tcs = new TaskCompletionSource<bool>();
+
+				source.ImageOpened += (s, e) =>
+				{
+					tcs.TrySetResult(true);
+				};
+
+				source.ImageFailed += (s, e) =>
+				{
+					tcs.TrySetException(new Exception(e.ErrorMessage));
+				};
+
+				return tcs.Task;
 			}
 #endif
 		}

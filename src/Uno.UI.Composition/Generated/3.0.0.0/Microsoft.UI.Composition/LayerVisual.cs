@@ -8,8 +8,8 @@ namespace Microsoft.UI.Composition
 #endif
 	public partial class LayerVisual : global::Microsoft.UI.Composition.ContainerVisual
 	{
-#if __ANDROID__ || __IOS__ || IS_UNIT_TESTS || __WASM__ || __SKIA__ || __NETSTD_REFERENCE__ || __MACOS__
-		[global::Uno.NotImplemented("__ANDROID__", "__IOS__", "IS_UNIT_TESTS", "__WASM__", "__SKIA__", "__NETSTD_REFERENCE__", "__MACOS__")]
+#if __ANDROID__ || __IOS__ || __TVOS__ || IS_UNIT_TESTS || __WASM__ || __SKIA__ || __NETSTD_REFERENCE__
+		[global::Uno.NotImplemented("__ANDROID__", "__IOS__", "__TVOS__", "IS_UNIT_TESTS", "__WASM__", "__SKIA__", "__NETSTD_REFERENCE__")]
 		public global::Microsoft.UI.Composition.CompositionEffectBrush Effect
 		{
 			get
@@ -22,8 +22,8 @@ namespace Microsoft.UI.Composition
 			}
 		}
 #endif
-#if __ANDROID__ || __IOS__ || IS_UNIT_TESTS || __WASM__ || __SKIA__ || __NETSTD_REFERENCE__ || __MACOS__
-		[global::Uno.NotImplemented("__ANDROID__", "__IOS__", "IS_UNIT_TESTS", "__WASM__", "__SKIA__", "__NETSTD_REFERENCE__", "__MACOS__")]
+#if __ANDROID__ || __IOS__ || __TVOS__ || IS_UNIT_TESTS || __WASM__ || __SKIA__ || __NETSTD_REFERENCE__
+		[global::Uno.NotImplemented("__ANDROID__", "__IOS__", "__TVOS__", "IS_UNIT_TESTS", "__WASM__", "__SKIA__", "__NETSTD_REFERENCE__")]
 		public global::Microsoft.UI.Composition.CompositionShadow Shadow
 		{
 			get
@@ -36,9 +36,9 @@ namespace Microsoft.UI.Composition
 			}
 		}
 #endif
-		// Forced skipping of method Microsoft.UI.Composition.LayerVisual.Shadow.set
 		// Forced skipping of method Microsoft.UI.Composition.LayerVisual.Effect.get
-		// Forced skipping of method Microsoft.UI.Composition.LayerVisual.Shadow.get
 		// Forced skipping of method Microsoft.UI.Composition.LayerVisual.Effect.set
+		// Forced skipping of method Microsoft.UI.Composition.LayerVisual.Shadow.set
+		// Forced skipping of method Microsoft.UI.Composition.LayerVisual.Shadow.get
 	}
 }

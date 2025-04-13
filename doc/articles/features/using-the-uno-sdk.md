@@ -186,6 +186,7 @@ By default, the Uno.Sdk specifies a set of OS Platform versions, as follows:
 | iOS | 14.2 |
 | macOS | 10.14 |
 | MacCatalyst | 14.0 |
+| tvOS  | 14.2 |
 | WinUI | 10.0.18362.0 |
 
 You can set this property in a `Choose` MSBuild block in order to alter its value based on the active `TargetFramework`.
@@ -205,6 +206,11 @@ You can set this property in a `Choose` MSBuild block in order to alter its valu
     <When Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'macos'">
       <PropertyGroup>
         <SupportedOSPlatformVersion>10.14</SupportedOSPlatformVersion>
+      </PropertyGroup>
+    </When>
+    <When Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tvOS'">
+      <PropertyGroup>
+        <SupportedOSPlatformVersion>14.2</SupportedOSPlatformVersion>
       </PropertyGroup>
     </When>
     <When Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">
@@ -237,10 +243,7 @@ As a result, the csproj file is on disk and will show the file as modified in yo
 
 Note that we are currently tracking these Visual Studio issues, make sure to upvote them:
 
-- `net8.0-desktop` must be first for WSL debugging to work ([Link](https://developercommunity.visualstudio.com/t/net80-desktop-must-be-first-for-WSL-deb/10643714))
 - `net8.0-browserwasm` must be first for WebAssembly debugging to work ([Link](https://developercommunity.visualstudio.com/t/net80-must-be-first-for-WebAssembly-pub/10643720))
-- `net8.0-windows10` needs to be first for WinAppSDK Hot reload to work ([Link](https://developercommunity.visualstudio.com/t/net80-windows10-needs-to-be-first-for-W/10643724))
-- [WSL HotReload does not invoke MetadataUpdater properly](https://developercommunity.visualstudio.com/t/WSL-HotReload-does-not-invoke-MetadataUp/10643733)
 - [WinAppSDK Unpackaged profile cannot be selected properly when a net8.0 mobile target is active](https://developercommunity.visualstudio.com/t/WinAppSDK-Unpackaged-profile-cannot-be-s/10643735)
 
 ## Disabling Default Items
@@ -277,9 +280,9 @@ By Default when using the Uno.Sdk you get the added benefit of default includes 
 - `*.wasm.cs` (WebAssembly)
 - `*.skia.cs` (Skia)
 - `*.reference.cs` (Reference only)
-- `*.iOS.cs`(iOS & MacCatalyst)
-- `*.macOS.cs` (MacOS not MacCatalyst)
-- `*.iOSmacOS.cs` (iOS, MacCatalyst, & MacOS)
+- `*.iOS.cs`, `*.iOSmacOS.cs` (iOS & MacCatalyst)
+- `*.tvOS.cs`(tvOS)
+- `*.UIKit.cs`, `*.Apple.cs` (iOS & Mac Catalyst & tvOS)
 - `*.Android.cs` (Android)
 - `*.WinAppSDK.cs` (Windows App SDK)
 

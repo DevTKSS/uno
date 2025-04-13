@@ -18,12 +18,8 @@ using Windows.Foundation;
 using Windows.UI;
 using static Microsoft/* UWP don't rename */.UI.Xaml.Controls._Tracing;
 
-#if __IOS__
+#if __APPLE_UIKIT__
 using UIKit;
-#endif
-
-#if __MACOS__
-using AppKit;
 #endif
 
 namespace Uno.UI.Xaml.Core
@@ -259,9 +255,7 @@ namespace Uno.UI.Xaml.Core
 			//AddRoot(_connectedAnimationRoot));
 			AddRoot(FullWindowMediaRoot);
 
-#if !__MACOS__
 			AddRoot(PopupRoot);
-#endif
 
 			//AddRoot(_printRoot));
 			//AddRoot(_transitionRoot));
@@ -394,7 +388,7 @@ namespace Uno.UI.Xaml.Core
 				return contentRoot.FocusManager;
 			}
 
-			if (dependencyObject?.GetContext().ContentRootCoordinator.CoreWindowContentRoot is ContentRoot coreWindowContentRoot)
+			if (dependencyObject?.GetContext().ContentRootCoordinator.Unsafe_IslandsIncompatible_CoreWindowContentRoot is ContentRoot coreWindowContentRoot)
 			{
 				return coreWindowContentRoot.FocusManager;
 			}
@@ -409,7 +403,7 @@ namespace Uno.UI.Xaml.Core
 				return visualTree.ContentRoot;
 			}
 
-			if (dependencyObject?.GetContext().ContentRootCoordinator.CoreWindowContentRoot is ContentRoot contentRoot)
+			if (dependencyObject?.GetContext().ContentRootCoordinator.Unsafe_IslandsIncompatible_CoreWindowContentRoot is ContentRoot contentRoot)
 			{
 				return contentRoot;
 			}
@@ -441,7 +435,7 @@ namespace Uno.UI.Xaml.Core
 					UIElement rootVisual = RootVisual!;
 					rootVisual.IsLoaded = true;
 				}
-				else if (root.XamlRoot?.VisualTree.RootElement is { } xamlIsland)
+				else if (RootElement is { } xamlIsland)
 				{
 					xamlIsland.IsLoaded = true;
 				}
@@ -598,7 +592,7 @@ namespace Uno.UI.Xaml.Core
 			return false;
 		}
 
-		internal static XamlIsland? GetXamlIslandRootForElement(DependencyObject? pObject)
+		internal static XamlIslandRoot? GetXamlIslandRootForElement(DependencyObject? pObject)
 		{
 			if (pObject is null) // || !pObject.GetContext().HasXamlIslandRoots())
 			{
@@ -606,7 +600,7 @@ namespace Uno.UI.Xaml.Core
 			}
 			if (GetForElement(pObject) is { } visualTree)
 			{
-				return visualTree.RootElement as XamlIsland;
+				return visualTree.RootElement as XamlIslandRoot;
 			}
 			return null;
 		}
@@ -716,7 +710,7 @@ namespace Uno.UI.Xaml.Core
 					}
 				}
 
-				if (currentAncestor is XamlIsland xamlIslandRoot)
+				if (currentAncestor is XamlIslandRoot xamlIslandRoot)
 				{
 					return xamlIslandRoot.ContentRoot.VisualTree;
 				}
@@ -881,7 +875,7 @@ namespace Uno.UI.Xaml.Core
 		{
 			get
 			{
-				if (RootElement is XamlIsland xamlIslandRoot)
+				if (RootElement is XamlIslandRoot xamlIslandRoot)
 				{
 					return xamlIslandRoot.GetSize();
 				}
@@ -905,7 +899,7 @@ namespace Uno.UI.Xaml.Core
 		{
 			get
 			{
-				if (RootElement is XamlIsland xamlIslandRoot)
+				if (RootElement is XamlIslandRoot xamlIslandRoot)
 				{
 					return xamlIslandRoot.IsVisible();
 				}

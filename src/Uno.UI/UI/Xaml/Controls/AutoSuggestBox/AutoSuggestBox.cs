@@ -16,10 +16,8 @@ using Microsoft.UI.Xaml.Media;
 using Uno.Disposables;
 using WinUICoreServices = Uno.UI.Xaml.Core.CoreServices;
 
-#if __IOS__
+#if __APPLE_UIKIT__
 using UIKit;
-#elif __MACOS__
-using AppKit;
 #endif
 
 namespace Microsoft.UI.Xaml.Controls
@@ -71,7 +69,7 @@ namespace Microsoft.UI.Xaml.Controls
 			_popup.DisableFocus();
 #endif
 
-#if __IOS__
+#if __APPLE_UIKIT__
 			if (_textBox is { } textbox)
 			{
 				textbox.IsKeepingFocusOnEndEditing = true;
@@ -179,6 +177,11 @@ namespace Microsoft.UI.Xaml.Controls
 					IsSuggestionListOpen = true;
 					_suggestionsList.ItemsSource = GetItems();
 				}
+
+				// We need to layout the popup again after the list changes to account for the
+				// changed height and/or width when the popup is above or to the left of the
+				// ASB respectively.
+				LayoutPopup();
 			}
 		}
 

@@ -10,6 +10,7 @@ namespace Microsoft.UI.Composition
 	{
 		// Skipping already declared property Mode
 		// Skipping already declared property Power
+		// Forced skipping of method Microsoft.UI.Composition.PowerEasingFunction.Mode.get
 		// Forced skipping of method Microsoft.UI.Composition.PowerEasingFunction.Power.get
 	}
 }

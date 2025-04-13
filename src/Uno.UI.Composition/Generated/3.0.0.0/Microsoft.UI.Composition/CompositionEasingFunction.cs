@@ -16,8 +16,8 @@ namespace Microsoft.UI.Composition
 		// Skipping already declared method Microsoft.UI.Composition.CompositionEasingFunction.CreateBounceEasingFunction(Microsoft.UI.Composition.Compositor, Microsoft.UI.Composition.CompositionEasingFunctionMode, int, float)
 		// Skipping already declared method Microsoft.UI.Composition.CompositionEasingFunction.CreateCircleEasingFunction(Microsoft.UI.Composition.Compositor, Microsoft.UI.Composition.CompositionEasingFunctionMode)
 		// Skipping already declared method Microsoft.UI.Composition.CompositionEasingFunction.CreateElasticEasingFunction(Microsoft.UI.Composition.Compositor, Microsoft.UI.Composition.CompositionEasingFunctionMode, int, float)
-		// Skipping already declared method Microsoft.UI.Composition.CompositionEasingFunction.CreateExpoEasingFunction(Microsoft.UI.Composition.Compositor, Microsoft.UI.Composition.CompositionEasingFunctionMode, float)
-		// Skipping already declared method Microsoft.UI.Composition.CompositionEasingFunction.CreateSineEasingFunction(Microsoft.UI.Composition.Compositor, Microsoft.UI.Composition.CompositionEasingFunctionMode)
+		// Skipping already declared method Microsoft.UI.Composition.CompositionEasingFunction.CreateExponentialEasingFunction(Microsoft.UI.Composition.Compositor, Microsoft.UI.Composition.CompositionEasingFunctionMode, float)
 		// Skipping already declared method Microsoft.UI.Composition.CompositionEasingFunction.CreatePowerEasingFunction(Microsoft.UI.Composition.Compositor, Microsoft.UI.Composition.CompositionEasingFunctionMode, float)
+		// Skipping already declared method Microsoft.UI.Composition.CompositionEasingFunction.CreateSineEasingFunction(Microsoft.UI.Composition.Compositor, Microsoft.UI.Composition.CompositionEasingFunctionMode)
 	}
 }

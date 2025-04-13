@@ -22,12 +22,12 @@ using Uno.UI.Helpers;
 using Uno.UI.Helpers.Xaml;
 using MyProject;
 
-#if __ANDROID__
+#if HAS_UNO_SKIA
+using _View = Microsoft.UI.Xaml.UIElement;
+#elif __ANDROID__
 using _View = Android.Views.View;
-#elif __IOS__
+#elif __APPLE_UIKIT__ || __IOS__ || __TVOS__
 using _View = UIKit.UIView;
-#elif __MACOS__
-using _View = AppKit.NSView;
 #else
 using _View = Microsoft.UI.Xaml.UIElement;
 #endif
@@ -164,6 +164,7 @@ namespace Uno.UI.Tests.Windows_UI_Xaml_Data.BindingTests.Controls
 					if (__rootInstance is FrameworkElement __fe)
 					{
 						__fe.Loading += __UpdateBindingsAndResources;
+						__fe.Unloaded += __StopTracking;
 					}
 					if (__rootInstance is DependencyObject d)
 					{
@@ -203,8 +204,10 @@ namespace Uno.UI.Tests.Windows_UI_Xaml_Data.BindingTests.Controls
 				private global::Microsoft.UI.Xaml.Data.ElementNameSubject _topLevelSubject = new global::Microsoft.UI.Xaml.Data.ElementNameSubject(isRuntimeBound: true, name: "topLevel");
 				private void __UpdateBindingsAndResources(global::Microsoft.UI.Xaml.FrameworkElement s, object e)
 				{
-					var owner = this;
 					_component_0.UpdateResourceBindings();
+				}
+				private void __StopTracking(object s, global::Microsoft.UI.Xaml.RoutedEventArgs e)
+				{
 				}
 			}
 		}

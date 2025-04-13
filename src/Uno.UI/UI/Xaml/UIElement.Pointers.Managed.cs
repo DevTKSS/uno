@@ -61,7 +61,7 @@ namespace Microsoft.UI.Xaml
 		/// <returns></returns>
 		private object CoerceHitTestVisibility(object baseValue)
 		{
-			if (this is RootVisual or XamlIsland)
+			if (this is RootVisual or XamlIslandRoot)
 			{
 				return HitTestability.Visible;
 			}
@@ -81,7 +81,7 @@ namespace Microsoft.UI.Xaml
 			if (
 #if __WASM__
 				!(IsLoaded || HtmlTagIsSvg) ||
-#elif !__MACOS__
+#else
 				!IsLoaded ||
 #endif
 				!IsHitTestVisible || Visibility != Visibility.Visible || !IsEnabledOverride())

@@ -1,11 +1,14 @@
-﻿using System;
+﻿#if !__SKIA__
+using System;
 using System.Linq;
+using Microsoft.UI.Dispatching;
+using Windows.UI.Core;
 
 namespace Microsoft.UI.Xaml.Media.Animation
 {
 	internal abstract class DispatcherAnimator<T> : CPUBoundAnimator<T> where T : struct
 	{
-		public const int DefaultFrameRate = 30;
+		public const int DefaultFrameRate = 60;
 
 		private readonly int _frameRate;
 		private readonly DispatcherTimer _timer;
@@ -27,3 +30,4 @@ namespace Microsoft.UI.Xaml.Media.Animation
 		protected abstract override T GetUpdatedValue(long frame, T from, T to);
 	}
 }
+#endif

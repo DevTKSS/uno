@@ -8,6 +8,5 @@ namespace Microsoft.UI.Composition
 #endif
 	public partial class LinearEasingFunction : global::Microsoft.UI.Composition.CompositionEasingFunction
 	{
-
 	}
 }

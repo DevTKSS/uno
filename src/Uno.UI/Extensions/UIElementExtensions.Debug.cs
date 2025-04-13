@@ -1,4 +1,6 @@
-﻿using System.Globalization;
+﻿using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 using System.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
@@ -201,10 +203,8 @@ static partial class UIElementExtensions
 #elif HAS_UNO
 			UIElement { IsVisualTreeRoot: true } => 0,
 #endif
-#if __IOS__
+#if __APPLE_UIKIT__
 			UIKit.UIView native => native.Superview?.GetDebugDepth() + 1 ?? 0,
-#elif __MACOS__
-			AppKit.NSView native => native.Superview?.GetDebugDepth() + 1 ?? 0,
 #elif __ANDROID__
 			Android.Views.View native => native.Parent?.GetDebugDepth() + 1 ?? 0,
 #endif
@@ -215,4 +215,35 @@ static partial class UIElementExtensions
 			_ => 0,
 #endif
 		};
+
+
+	/// <summary>
+	/// Get a display identifier for the tree down to the given element for debug purposes
+	/// </summary>
+	internal static string GetDebugPath(this object elt)
+	{
+		var sb = new StringBuilder();
+		foreach (var parent in GetParents(elt).Reverse())
+		{
+			sb.AppendLine(parent.GetDebugIdentifier());
+		}
+
+		sb.Append(GetDebugIdentifier(elt));
+
+		return sb.ToString();
+
+#if HAS_UNO
+		static IEnumerable<object> GetParents(object elt)
+			=> elt.GetParents();
+#else
+		static IEnumerable<object> GetParents(object elt)
+		{
+			while (elt is DependencyObject @do)
+			{
+				yield return @do;
+				elt = VisualTreeHelper.GetParent(@do);
+			}
+		}
+#endif
+	}
 }

@@ -12,27 +12,30 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Hosting;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
+using System.Diagnostics;
 
 namespace Uno.UI.RuntimeTests.Tests.Windows_UI_Composition;
 
-[TestClass]
+[ConditionalTestClass(IgnoredPlatforms = RuntimeTestPlatforms.Native)] // RedirectVisual requires composition
 public class Given_RedirectVisual
 {
+#if HAS_UNO
 	[TestMethod]
-#if !HAS_RENDER_TARGET_BITMAP
-	[Ignore("Render target bitmap is not supported on this target")]
-#endif
 	[RunsOnUIThread]
 	public async Task When_Source_Changes()
 	{
-		var compositor = Window.Current.Compositor;
+		var compositor = TestServices.WindowHelper.XamlRoot.Compositor;
 		var expected = new Image
 		{
 			Width = 200,
 			Height = 200,
-			Stretch = Stretch.UniformToFill,
-			Source = new BitmapImage(new Uri("https://uno-assets.platform.uno/logos/uno.png")),
+			Stretch = Stretch.UniformToFill
 		};
+
+		bool opened = false;
+		expected.ImageOpened += (s, e) => opened = true;
+		expected.Source = new BitmapImage(new Uri("https://uno-assets.platform.uno/logos/uno.png"));
+
 		var sut = new ContentControl
 		{
 			Width = 200,
@@ -44,12 +47,6 @@ public class Given_RedirectVisual
 
 		ElementCompositionPreview.SetElementChildVisual(sut, redirectVisual);
 
-		var result = await Render(expected, sut);
-		await ImageAssert.AreEqualAsync(result.actual, result.expected);
-	}
-
-	private async Task<(RawBitmap expected, RawBitmap actual)> Render(FrameworkElement expected, FrameworkElement sut)
-	{
 		await UITestHelper.Load(new Grid
 		{
 			ColumnDefinitions =
@@ -64,6 +61,11 @@ public class Given_RedirectVisual
 			}
 		});
 
-		return (await UITestHelper.ScreenShot(expected), await UITestHelper.ScreenShot(sut));
+		await TestServices.WindowHelper.WaitFor(() => opened);
+
+		var (expectedScreenshot, actualScreenshot) = (await UITestHelper.ScreenShot(expected), await UITestHelper.ScreenShot(sut));
+
+		await ImageAssert.AreEqualAsync(actualScreenshot, expectedScreenshot);
 	}
+#endif
 }

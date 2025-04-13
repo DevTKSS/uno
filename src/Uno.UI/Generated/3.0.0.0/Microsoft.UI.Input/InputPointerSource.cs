@@ -10,15 +10,15 @@ namespace Microsoft.UI.Input
 	{
 		// Skipping already declared property Cursor
 		// Skipping already declared property DeviceKinds
-		// Forced skipping of method Microsoft.UI.Input.InputPointerSource.PointerMoved.add
+		// Forced skipping of method Microsoft.UI.Input.InputPointerSource.PointerEntered.add
 		// Forced skipping of method Microsoft.UI.Input.InputPointerSource.DeviceKinds.get
 		// Forced skipping of method Microsoft.UI.Input.InputPointerSource.PointerCaptureLost.add
 		// Forced skipping of method Microsoft.UI.Input.InputPointerSource.PointerCaptureLost.remove
-		// Forced skipping of method Microsoft.UI.Input.InputPointerSource.PointerEntered.add
+		// Forced skipping of method Microsoft.UI.Input.InputPointerSource.Cursor.set
 		// Forced skipping of method Microsoft.UI.Input.InputPointerSource.PointerEntered.remove
 		// Forced skipping of method Microsoft.UI.Input.InputPointerSource.PointerExited.add
 		// Forced skipping of method Microsoft.UI.Input.InputPointerSource.PointerExited.remove
-		// Forced skipping of method Microsoft.UI.Input.InputPointerSource.Cursor.set
+		// Forced skipping of method Microsoft.UI.Input.InputPointerSource.PointerMoved.add
 		// Forced skipping of method Microsoft.UI.Input.InputPointerSource.PointerMoved.remove
 		// Forced skipping of method Microsoft.UI.Input.InputPointerSource.PointerPressed.add
 		// Forced skipping of method Microsoft.UI.Input.InputPointerSource.PointerPressed.remove
@@ -33,8 +33,8 @@ namespace Microsoft.UI.Input
 		// Forced skipping of method Microsoft.UI.Input.InputPointerSource.PointerWheelChanged.add
 		// Forced skipping of method Microsoft.UI.Input.InputPointerSource.PointerWheelChanged.remove
 		// Forced skipping of method Microsoft.UI.Input.InputPointerSource.Cursor.get
-#if __ANDROID__ || __IOS__ || IS_UNIT_TESTS || __WASM__ || __SKIA__ || __NETSTD_REFERENCE__ || __MACOS__
-		[global::Uno.NotImplemented("__ANDROID__", "__IOS__", "IS_UNIT_TESTS", "__WASM__", "__SKIA__", "__NETSTD_REFERENCE__", "__MACOS__")]
+#if __ANDROID__ || __IOS__ || __TVOS__ || IS_UNIT_TESTS || __WASM__ || __SKIA__ || __NETSTD_REFERENCE__
+		[global::Uno.NotImplemented("__ANDROID__", "__IOS__", "__TVOS__", "IS_UNIT_TESTS", "__WASM__", "__SKIA__", "__NETSTD_REFERENCE__")]
 		public static global::Microsoft.UI.Input.InputPointerSource GetForIsland(global::Microsoft.UI.Content.ContentIsland island)
 		{
 			throw new global::System.NotImplementedException("The member InputPointerSource InputPointerSource.GetForIsland(ContentIsland island) is not implemented. For more information, visit https://aka.platform.uno/notimplemented#m=InputPointerSource%20InputPointerSource.GetForIsland%28ContentIsland%20island%29");

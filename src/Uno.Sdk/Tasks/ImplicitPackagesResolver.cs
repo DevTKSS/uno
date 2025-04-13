@@ -59,6 +59,8 @@ public sealed class ImplicitPackagesResolver_v0 : Task
 
 	public string? UnoLoggingVersion { get; set; }
 
+	public string? VlcNativeWindowsAssetsVersion { get; set; }
+
 	public string? WindowsCompatibilityVersion { get; set; }
 
 	public string? UnoWasmBootstrapVersion { get; set; }
@@ -148,11 +150,7 @@ public sealed class ImplicitPackagesResolver_v0 : Task
 			{
 				TargetFrameworkVersion = TargetFramework;
 				TargetRuntime = UnoTarget.Reference;
-				if (ProjectName.EndsWith("Skia.Gtk", StringComparison.InvariantCultureIgnoreCase))
-				{
-					TargetRuntime = UnoTarget.SkiaGtk;
-				}
-				else if (ProjectName.EndsWith("Skia.WPF", StringComparison.InvariantCultureIgnoreCase))
+				if (ProjectName.EndsWith("Skia.WPF", StringComparison.InvariantCultureIgnoreCase))
 				{
 					TargetRuntime = UnoTarget.SkiaWpf;
 				}
@@ -242,6 +240,7 @@ public sealed class ImplicitPackagesResolver_v0 : Task
 		// is invoked early.
 		manifest.UpdateManifest(PackageManifest.Group.WasmBootstrap, UnoWasmBootstrapVersion)
 			.UpdateManifest(PackageManifest.Group.OSLogging, UnoLoggingVersion)
+			.UpdateManifest(PackageManifest.Group.VlcNativeWindowsAssets, VlcNativeWindowsAssetsVersion)
 			.UpdateManifest(PackageManifest.Group.CoreLogging, UnoCoreLoggingSingletonVersion)
 			.UpdateManifest(PackageManifest.Group.UniversalImageLoading, UnoUniversalImageLoaderVersion)
 			.UpdateManifest(PackageManifest.Group.Dsp, UnoDspTasksVersion)

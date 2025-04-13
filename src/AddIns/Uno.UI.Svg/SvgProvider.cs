@@ -12,9 +12,11 @@ using Uno.Disposables;
 using Windows.Graphics.Display;
 using System.Diagnostics.CodeAnalysis;
 
+
 #if !__NETSTD_REFERENCE__
 using ShimSkiaSharp;
 using Svg.Skia;
+using Uno.Svg.Skia;
 using Uno.UI.Xaml.Media;
 using SkiaSharp;
 using SKCanvas = SkiaSharp.SKCanvas;
@@ -200,7 +202,7 @@ public partial class SvgProvider : ISvgProvider
 			}
 
 			canvas.Clear(SKColors.Transparent);
-			canvas.DrawPicture(_skSvg.Picture, ref scaleMatrix);
+			canvas.DrawPicture(_skSvg.Picture, in scaleMatrix);
 			_skBitmap = bitmap;
 			changed = true;
 		}

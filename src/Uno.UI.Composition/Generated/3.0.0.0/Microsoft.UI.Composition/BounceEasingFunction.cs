@@ -8,9 +8,9 @@ namespace Microsoft.UI.Composition
 #endif
 	public partial class BounceEasingFunction : global::Microsoft.UI.Composition.CompositionEasingFunction
 	{
-		// Skipping already declared property Mode
-		// Skipping already declared property Bounciness
 		// Skipping already declared property Bounces
+		// Skipping already declared property Bounciness
+		// Skipping already declared property Mode
 		// Forced skipping of method Microsoft.UI.Composition.BounceEasingFunction.Bounciness.get
 		// Forced skipping of method Microsoft.UI.Composition.BounceEasingFunction.Mode.get
 		// Forced skipping of method Microsoft.UI.Composition.BounceEasingFunction.Bounces.get

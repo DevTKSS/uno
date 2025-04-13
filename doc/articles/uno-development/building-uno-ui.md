@@ -10,7 +10,7 @@ This article explains how to build Uno.UI locally, for instance, if you wish to 
 
 - Visual Studio 2022 (17.8.1 or later)
   - Select the **ASP.NET and Web Development** workload
-  - Select the **.NET Multi-Platform App UI development`** workload
+  - Select the **.NET Multi-Platform App UI development** workload
   - Select the **.NET desktop development** workload
   - To build the UWP flavor of Uno, you'll need **UWP Development**, install all recent UWP SDKs, starting from 10.0.19041 (or above or equal to `TargetPlatformVersion` line [in this file](https://github.com/unoplatform/uno/blob/master/src/Uno.CrossTargetting.targets))
 - Install (**Tools** / **Android** / **Android SDK manager**) all Android SDKs starting from 7.1 (or the Android versions `TargetFrameworks` [list used here](https://github.com/unoplatform/uno/blob/master/src/Uno.UI.BindingHelper.Android/Uno.UI.BindingHelper.Android.netcoremobile.csproj))
@@ -88,10 +88,6 @@ It's recommended to build using the single-target approach, but it's also possib
 4. Build
 
 Inside Visual Studio, the number of platforms is restricted to limit the compilation time.
-
-## Building Uno.UI for macOS using Visual Studio for Mac
-
-See [instructions here](building-uno-macos.md) for building Uno.UI for the macOS platform.
 
 ## Troubleshooting build issues
 

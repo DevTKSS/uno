@@ -10,7 +10,6 @@ using Windows.UI.ViewManagement;
 using Uno.Helpers.Theming;
 using Uno.UI.Core;
 using Microsoft.UI.Windowing;
-using Windows.UI.Core.Preview;
 using Uno.Disposables;
 
 #if !HAS_UNO_WINUI
@@ -123,6 +122,7 @@ internal abstract class BaseWindowImplementation : IWindowImplementation
 
 		NativeWindowWrapper = nativeWindow;
 		Window.AppWindow.SetNativeWindow(nativeWindow);
+		OnNativeSizeChanged(null, new Size(nativeWindow.Bounds.Width, nativeWindow.Bounds.Height));
 		SetVisibleBoundsFromNative();
 	}
 
@@ -145,27 +145,9 @@ internal abstract class BaseWindowImplementation : IWindowImplementation
 				return;
 			}
 
-#if __SKIA__
-			// Legacy system close handling
-			var manager = SystemNavigationManagerPreview.GetForCurrentView();
-			if (manager is { HasConfirmedClose: false })
-			{
-				if (!manager.RequestAppClose())
-				{
-					// App closing was prevented, handle event
-					e.Cancel = true;
-
-					if (NativeWindowFactory.SupportsClosingCancellation)
-					{
-						return;
-					}
-				}
-			}
-#endif
-
 			if (e.Cancel && !NativeWindowFactory.SupportsClosingCancellation)
 			{
-				if (this.Log().IsWarningEnabled(LogLevel.Warning))
+				if (this.Log().IsWarningEnabled())
 				{
 					this.Log().Warn("Closing event was cancelled, but the platform does not support cancellation.");
 				}
@@ -308,7 +290,7 @@ internal abstract class BaseWindowImplementation : IWindowImplementation
 
 				if (!NativeWindowFactory.SupportsClosingCancellation)
 				{
-					if (this.Log().IsWarningEnabled(LogLevel.Warning))
+					if (this.Log().IsWarningEnabled())
 					{
 						this.Log().Warn("Window.Closed event was cancelled, but the platform does not support cancellation.");
 					}

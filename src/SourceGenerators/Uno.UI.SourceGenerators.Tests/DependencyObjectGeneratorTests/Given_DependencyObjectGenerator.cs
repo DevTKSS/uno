@@ -19,58 +19,6 @@ public class Given_DependencyObjectGenerator
 	private static readonly ReferenceAssemblies _refAsmAndroid = _Dotnet.CurrentAndroid.ReferenceAssemblies.AddPackages([new PackageIdentity("Uno.Diagnostics.Eventing", "2.1.0")]);
 	private static readonly ReferenceAssemblies _refAsm = _Dotnet.Current.ReferenceAssemblies.AddPackages([new PackageIdentity("Uno.Diagnostics.Eventing", "2.1.0")]);
 
-	private const string Configuration =
-#if DEBUG
-		"Debug";
-#else
-		"Release";
-#endif
-
-	private const string TFMPrevious = "net8.0";
-	private const string TFMCurrent = "net9.0";
-
-	private static MetadataReference[] BuildUnoReferences(bool isAndroid)
-	{
-		string[] availableTargets = isAndroid
-			? [
-				Path.Combine("Uno.UI.netcoremobile", Configuration, $"{TFMPrevious}-android"),
-				Path.Combine("Uno.UI.netcoremobile", Configuration, $"{TFMCurrent}-android"),
-			]
-			: [
-				// On CI the test assemblies set must be first, as it contains all
-				// dependent assemblies, which the other platforms don't (see DisablePrivateProjectReference).
-				Path.Combine("Uno.UI.Tests", Configuration, TFMPrevious),
-				Path.Combine("Uno.UI.Reference", Configuration, TFMPrevious),
-				Path.Combine("Uno.UI.Skia", Configuration, TFMPrevious),
-				Path.Combine("Uno.UI.Tests", Configuration, TFMCurrent),
-				Path.Combine("Uno.UI.Reference", Configuration, TFMCurrent),
-				Path.Combine("Uno.UI.Skia", Configuration, TFMCurrent),
-			];
-
-		var unoUIBase = Path.Combine(
-			Path.GetDirectoryName(typeof(Given_DependencyObjectGenerator).Assembly.Location)!,
-			"..",
-			"..",
-			"..",
-			"..",
-			"..",
-			"Uno.UI",
-			"bin"
-			);
-		var unoTarget = availableTargets
-			.Select(t => Path.Combine(unoUIBase, t, "Uno.UI.dll"))
-			.FirstOrDefault(File.Exists);
-		if (unoTarget is null)
-		{
-			throw new InvalidOperationException($"Unable to find Uno.UI.dll in {string.Join(",", availableTargets)}");
-		}
-
-		return Directory.GetFiles(Path.GetDirectoryName(unoTarget)!, "*.dll")
-					.Select(f => MetadataReference.CreateFromFile(Path.GetFullPath(f)))
-					.ToArray();
-	}
-
-
 	private async Task TestAndroid(string testCode, params DiagnosticResult[] expectedDiagnostics)
 	{
 		var test = new Verify.Test
@@ -82,7 +30,7 @@ public class Given_DependencyObjectGenerator
 			ReferenceAssemblies = _refAsmAndroid,
 		};
 
-		test.TestState.AdditionalReferences.AddRange(BuildUnoReferences(isAndroid: true));
+		test.TestState.AdditionalReferences.AddRange(UnoAssemblyHelper.LoadAssemblies());
 		test.ExpectedDiagnostics.AddRange(expectedDiagnostics);
 		await test.RunAsync();
 	}
@@ -98,7 +46,7 @@ public class Given_DependencyObjectGenerator
 
 			public class C : Android.Views.View, DependencyObject
 			{
-				public C(Context context) : base(context)
+				public C(Android.Views.Context context) : base(context)
 				{
 				}
 			
@@ -111,6 +59,12 @@ public class Given_DependencyObjectGenerator
 				public object GetAnimationBaseValue(DependencyProperty dp) => null;
 				public long RegisterPropertyChangedCallback(DependencyProperty dp, DependencyPropertyChangedCallback callback) => 0;
 				public void UnregisterPropertyChangedCallback(DependencyProperty dp, long token) { }
+			}
+
+			namespace Android.Views
+			{
+				public class View(Context context) { }
+				public class Context { }
 			}
 			""";
 
@@ -165,9 +119,6 @@ public class Given_DependencyObjectGenerator
 	 using Microsoft.UI.Xaml;
 	 using Microsoft.UI.Xaml.Data;
 	 using Uno.Diagnostics.Eventing;
-	 #if __MACOS__
-	 using AppKit;
-	 #endif
 	 partial class OuterClass
 	 {
 	 	[global::Microsoft.UI.Xaml.Data.Bindable]
@@ -356,7 +307,7 @@ public class Given_DependencyObjectGenerator
 			ReferenceAssemblies = _refAsm,
 		};
 
-		test.TestState.AdditionalReferences.AddRange(BuildUnoReferences(isAndroid: false));
+		test.TestState.AdditionalReferences.AddRange(UnoAssemblyHelper.LoadAssemblies());
 		await test.RunAsync();
 	}
 }

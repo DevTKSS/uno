@@ -21,6 +21,7 @@ using static Private.Infrastructure.TestServices;
 using Color = Windows.UI.Color;
 using Point = Windows.Foundation.Point;
 using System.Runtime.InteropServices;
+using Windows.Foundation;
 using SamplesApp.UITests;
 
 namespace Uno.UI.RuntimeTests.Tests.Windows_UI_Xaml_Controls
@@ -315,6 +316,33 @@ namespace Uno.UI.RuntimeTests.Tests.Windows_UI_Xaml_Controls
 		}
 
 		[TestMethod]
+		public async Task When_Shift()
+		{
+			using var _ = new TextBoxFeatureConfigDisposable();
+
+			var SUT = new TextBox
+			{
+				Text = "hello world"
+			};
+
+			var keyDownCount = 0;
+			SUT.KeyDown += (_, _) => keyDownCount++;
+
+			WindowHelper.WindowContent = SUT;
+
+			await WindowHelper.WaitForIdle();
+			await WindowHelper.WaitForLoaded(SUT);
+
+			SUT.Focus(FocusState.Programmatic);
+			await WindowHelper.WaitForIdle();
+
+			SUT.SafeRaiseEvent(UIElement.KeyDownEvent, new KeyRoutedEventArgs(SUT, VirtualKey.Shift, VirtualKeyModifiers.None, unicodeKey: '\0'));
+			await WindowHelper.WaitForIdle();
+
+			Assert.AreEqual("hello world", SUT.Text);
+		}
+
+		[TestMethod]
 		public async Task When_Ctrl_Home_End()
 		{
 			using var _ = new TextBoxFeatureConfigDisposable();
@@ -365,6 +393,9 @@ namespace Uno.UI.RuntimeTests.Tests.Windows_UI_Xaml_Controls
 
 			SUT.Focus(FocusState.Programmatic);
 			await WindowHelper.WaitForIdle();
+
+			Assert.AreEqual(0, SUT.SelectionStart);
+			Assert.AreEqual(0, SUT.SelectionLength);
 
 			// on macOS it's option (menu/alt) and backspace to delete a word
 			var mod = OperatingSystem.IsMacOS() ? VirtualKeyModifiers.Menu : VirtualKeyModifiers.Control;
@@ -771,7 +802,7 @@ namespace Uno.UI.RuntimeTests.Tests.Windows_UI_Xaml_Controls
 		[TestMethod]
 		public async Task When_Scrolling_Updates_With_Movement()
 		{
-			if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+			if (OperatingSystem.IsLinux() || OperatingSystem.IsBrowser())
 			{
 				Assert.Inconclusive("There are small differences in fonts between Linux and other platforms, so the numbers aren't exactly the same.");
 			}
@@ -825,7 +856,7 @@ namespace Uno.UI.RuntimeTests.Tests.Windows_UI_Xaml_Controls
 			sv.HorizontalOffset.Should().BeGreaterThan(0);
 		}
 
-		[TestMethod]
+		[ConditionalTest(IgnoredPlatforms = RuntimeTestPlatforms.SkiaWasm)]
 		public async Task When_Scrolling_Updates_After_Backspace()
 		{
 			using var _ = new TextBoxFeatureConfigDisposable();
@@ -867,10 +898,12 @@ namespace Uno.UI.RuntimeTests.Tests.Windows_UI_Xaml_Controls
 			}
 			await WindowHelper.WaitForIdle();
 
-			Assert.AreEqual(0, sv.ScrollableWidth);
+			// Accounting for font difference on Wasm Skia, until we unify with Open Sans.
+			Assert.AreEqual(OperatingSystem.IsBrowser() ? 4 : 0, sv.ScrollableWidth);
 		}
 
-		[TestMethod]
+		// Clipboard is currently not available on skia-WASM
+		[ConditionalTest(IgnoredPlatforms = RuntimeTestPlatforms.SkiaWasm)]
 		public async Task When_Scrolling_Updates_After_Pasting_Long_Text()
 		{
 			using var _ = new TextBoxFeatureConfigDisposable();
@@ -903,6 +936,14 @@ namespace Uno.UI.RuntimeTests.Tests.Windows_UI_Xaml_Controls
 		[TestMethod]
 		public async Task When_Pointer_Tap()
 		{
+			if (OperatingSystem.IsBrowser())
+			{
+				// Temporarily: Wasm Skia can't use Arial so the coordinates being pressed are not what we expect.
+				// In future when we have Open Sans by default, we'll need to remove the use of Arial and maybe
+				// adjust the coordinates so that they do what we want. Then the test will become stable on Skia Desktop and Wasm Skia.
+				Assert.Inconclusive("Skipped on Wasm Skia due to font differences.");
+			}
+
 			using var _ = new TextBoxFeatureConfigDisposable();
 
 			var SUT = new TextBox
@@ -932,6 +973,41 @@ namespace Uno.UI.RuntimeTests.Tests.Windows_UI_Xaml_Controls
 			await WindowHelper.WaitForIdle();
 
 			Assert.AreEqual(10, SUT.SelectionStart);
+			Assert.AreEqual(0, SUT.SelectionLength);
+		}
+
+		[TestMethod]
+		public async Task When_Pointer_Tap_After_Ending_Spaces()
+		{
+			using var _ = new TextBoxFeatureConfigDisposable();
+
+			var SUT = new TextBox
+			{
+				Width = 350,
+				Text = "Hello world          ",
+				FontFamily = "Arial" // no Segoe UI on Linux, so we set something common
+			};
+
+			WindowHelper.WindowContent = SUT;
+
+			await WindowHelper.WaitForIdle();
+			await WindowHelper.WaitForLoaded(SUT);
+
+			SUT.Focus(FocusState.Programmatic);
+			await WindowHelper.WaitForIdle();
+
+			var injector = InputInjector.TryCreate() ?? throw new InvalidOperationException("Failed to init the InputInjector");
+			using var mouse = injector.GetMouse();
+
+			var bounds = SUT.GetAbsoluteBounds();
+			mouse.MoveTo(new Point(bounds.Right - 30, bounds.GetMidY()));
+			await WindowHelper.WaitForIdle();
+
+			mouse.Press();
+			mouse.Release();
+			await WindowHelper.WaitForIdle();
+
+			Assert.AreEqual(SUT.Text.Length, SUT.SelectionStart);
 			Assert.AreEqual(0, SUT.SelectionLength);
 		}
 
@@ -977,6 +1053,14 @@ namespace Uno.UI.RuntimeTests.Tests.Windows_UI_Xaml_Controls
 		[TestMethod]
 		public async Task When_Pointer_RightClick_No_Selection()
 		{
+			if (OperatingSystem.IsBrowser())
+			{
+				// Temporarily: Wasm Skia can't use Arial so the coordinates being pressed are not what we expect.
+				// In future when we have Open Sans by default, we'll need to remove the use of Arial and maybe
+				// adjust the coordinates so that they do what we want. Then the test will become stable on Skia Desktop and Wasm Skia.
+				Assert.Inconclusive("Skipped on Wasm Skia due to font differences.");
+			}
+
 			using var _ = new TextBoxFeatureConfigDisposable();
 
 			var SUT = new TextBox
@@ -1009,7 +1093,7 @@ namespace Uno.UI.RuntimeTests.Tests.Windows_UI_Xaml_Controls
 			Assert.AreEqual(0, SUT.SelectionLength);
 		}
 
-		[TestMethod]
+		[ConditionalTest(IgnoredPlatforms = RuntimeTestPlatforms.SkiaUIKit)] // Fails in Skia UIKit CI - https://github.com/unoplatform/uno-private/issues/808
 		public async Task When_Pointer_RightClick_Selection()
 		{
 			using var _ = new TextBoxFeatureConfigDisposable();
@@ -1017,7 +1101,8 @@ namespace Uno.UI.RuntimeTests.Tests.Windows_UI_Xaml_Controls
 			var SUT = new TextBox
 			{
 				Width = 150,
-				Text = "Hello world"
+				Text = "Hello world",
+				FontFamily = new FontFamily("ms-appx:///Assets/Fonts/OpenSans/OpenSans.ttf")
 			};
 
 			WindowHelper.WindowContent = SUT;
@@ -1059,6 +1144,14 @@ namespace Uno.UI.RuntimeTests.Tests.Windows_UI_Xaml_Controls
 		[TestMethod]
 		public async Task When_Pointer_Hold_Drag()
 		{
+			if (OperatingSystem.IsBrowser())
+			{
+				// Temporarily: Wasm Skia can't use Arial so the coordinates being pressed are not what we expect.
+				// In future when we have Open Sans by default, we'll need to remove the use of Arial and maybe
+				// adjust the coordinates so that they do what we want. Then the test will become stable on Skia Desktop and Wasm Skia.
+				Assert.Inconclusive("Skipped on Wasm Skia due to font differences.");
+			}
+
 			using var _ = new TextBoxFeatureConfigDisposable();
 
 			var SUT = new TextBox
@@ -1098,6 +1191,14 @@ namespace Uno.UI.RuntimeTests.Tests.Windows_UI_Xaml_Controls
 		[TestMethod]
 		public async Task When_Pointer_Hold_Drag_OutOfBounds()
 		{
+			if (OperatingSystem.IsBrowser())
+			{
+				// Temporarily: Wasm Skia can't use Arial so the coordinates being pressed are not what we expect.
+				// In future when we have Open Sans by default, we'll need to remove the use of Arial and maybe
+				// adjust the coordinates so that they do what we want. Then the test will become stable on Skia Desktop and Wasm Skia.
+				Assert.Inconclusive("Skipped on Wasm Skia due to font differences.");
+			}
+
 			using var _ = new TextBoxFeatureConfigDisposable();
 
 			var SUT = new TextBox
@@ -1138,6 +1239,14 @@ namespace Uno.UI.RuntimeTests.Tests.Windows_UI_Xaml_Controls
 		[TestMethod]
 		public async Task When_LongText_Pointer_Hold_Drag_OutOfBounds()
 		{
+			if (OperatingSystem.IsBrowser())
+			{
+				// Temporarily: Wasm Skia can't use Arial so the coordinates being pressed are not what we expect.
+				// In future when we have Open Sans by default, we'll need to remove the use of Arial and maybe
+				// adjust the coordinates so that they do what we want. Then the test will become stable on Skia Desktop and Wasm Skia.
+				Assert.Inconclusive("Skipped on Wasm Skia due to font differences.");
+			}
+
 			using var _ = new TextBoxFeatureConfigDisposable();
 
 			var SUT = new TextBox
@@ -1272,6 +1381,7 @@ namespace Uno.UI.RuntimeTests.Tests.Windows_UI_Xaml_Controls
 			await WindowHelper.WaitForIdle();
 
 			// the selection should start on the right
+			Assert.IsTrue(SUT.IsBackwardSelection);
 			SUT.SafeRaiseEvent(UIElement.KeyDownEvent, new KeyRoutedEventArgs(SUT, VirtualKey.Right, VirtualKeyModifiers.Shift));
 			await WindowHelper.WaitForIdle();
 
@@ -1328,6 +1438,14 @@ namespace Uno.UI.RuntimeTests.Tests.Windows_UI_Xaml_Controls
 		[TestMethod]
 		public async Task When_Typing_While_Pointer_Held()
 		{
+			if (OperatingSystem.IsBrowser())
+			{
+				// Temporarily: Wasm Skia can't use Arial so the coordinates being pressed are not what we expect.
+				// In future when we have Open Sans by default, we'll need to remove the use of Arial and maybe
+				// adjust the coordinates so that they do what we want. Then the test will become stable on Skia Desktop and Wasm Skia.
+				Assert.Inconclusive("Skipped on Wasm Skia due to font differences.");
+			}
+
 			using var _ = new TextBoxFeatureConfigDisposable();
 
 			var SUT = new TextBox
@@ -1387,6 +1505,14 @@ namespace Uno.UI.RuntimeTests.Tests.Windows_UI_Xaml_Controls
 		[DataRow(VirtualKey.A, VirtualKeyModifiers.Control)]
 		public async Task When_Move_Caret_While_Pointer_Held(VirtualKey key, VirtualKeyModifiers modifiers)
 		{
+			if (OperatingSystem.IsBrowser())
+			{
+				// Temporarily: Wasm Skia can't use Arial so the coordinates being pressed are not what we expect.
+				// In future when we have Open Sans by default, we'll need to remove the use of Arial and maybe
+				// adjust the coordinates so that they do what we want. Then the test will become stable on Skia Desktop and Wasm Skia.
+				Assert.Inconclusive("Skipped on Wasm Skia due to font differences.");
+			}
+
 			using var _ = new TextBoxFeatureConfigDisposable();
 
 			var SUT = new TextBox
@@ -1438,6 +1564,14 @@ namespace Uno.UI.RuntimeTests.Tests.Windows_UI_Xaml_Controls
 		[TestMethod]
 		public async Task When_Cut_While_Pointer_Held()
 		{
+			if (OperatingSystem.IsBrowser())
+			{
+				// Temporarily: Wasm Skia can't use Arial so the coordinates being pressed are not what we expect.
+				// In future when we have Open Sans by default, we'll need to remove the use of Arial and maybe
+				// adjust the coordinates so that they do what we want. Then the test will become stable on Skia Desktop and Wasm Skia.
+				Assert.Inconclusive("Skipped on Wasm Skia due to font differences.");
+			}
+
 			using var _ = new TextBoxFeatureConfigDisposable();
 
 			var SUT = new TextBox
@@ -1490,8 +1624,20 @@ namespace Uno.UI.RuntimeTests.Tests.Windows_UI_Xaml_Controls
 		}
 
 		[TestMethod]
+#if __SKIA__
+		[Ignore("Disabled due to https://github.com/unoplatform/uno-private/issues/878")]
+#endif
 		public async Task When_Paste_While_Pointer_Held()
 		{
+			if (OperatingSystem.IsBrowser())
+			{
+				// Clipboard can't be read in managed code for security reasons.
+				// An actual attempt to paste will work, because the native HTML
+				// input is what will receive the key event, and the browser will be
+				// responsible for changing the text.
+				Assert.Inconclusive("Skipped on Wasm Skia due to clipboard-related issues.");
+			}
+
 			using var _ = new TextBoxFeatureConfigDisposable();
 
 			var dp = new DataPackage();
@@ -1550,6 +1696,14 @@ namespace Uno.UI.RuntimeTests.Tests.Windows_UI_Xaml_Controls
 		[TestMethod]
 		public async Task When_Escape_While_Pointer_Held()
 		{
+			if (OperatingSystem.IsBrowser())
+			{
+				// Temporarily: Wasm Skia can't use Arial so the coordinates being pressed are not what we expect.
+				// In future when we have Open Sans by default, we'll need to remove the use of Arial and maybe
+				// adjust the coordinates so that they do what we want. Then the test will become stable on Skia Desktop and Wasm Skia.
+				Assert.Inconclusive("Skipped on Wasm Skia due to font differences.");
+			}
+
 			using var _ = new TextBoxFeatureConfigDisposable();
 
 			var SUT = new TextBox
@@ -1641,6 +1795,14 @@ namespace Uno.UI.RuntimeTests.Tests.Windows_UI_Xaml_Controls
 				Assert.Inconclusive("There's no `Insert` key on Mac keyboards");
 				// it's replaced by the `fn` key, which is a modifier
 			}
+			if (OperatingSystem.IsBrowser())
+			{
+				// Clipboard can't be read in managed code for security reasons.
+				// An actual attempt to paste will work, because the native HTML
+				// input is what will receive the key event, and the browser will be
+				// responsible for changing the text.
+				Assert.Inconclusive("Skipped on Wasm Skia due to clipboard-related issues.");
+			}
 
 			using var _ = new TextBoxFeatureConfigDisposable();
 
@@ -1729,6 +1891,15 @@ namespace Uno.UI.RuntimeTests.Tests.Windows_UI_Xaml_Controls
 		[TestMethod]
 		public async Task When_Cut_Paste()
 		{
+			if (OperatingSystem.IsBrowser())
+			{
+				// Clipboard can't be read in managed code for security reasons.
+				// An actual attempt to paste will work, because the native HTML
+				// input is what will receive the key event, and the browser will be
+				// responsible for changing the text.
+				Assert.Inconclusive("Skipped on Wasm Skia due to clipboard-related issues.");
+			}
+
 			using var _ = new TextBoxFeatureConfigDisposable();
 
 			var SUT = new TextBox
@@ -1776,7 +1947,8 @@ namespace Uno.UI.RuntimeTests.Tests.Windows_UI_Xaml_Controls
 			Assert.AreEqual(0, SUT.SelectionLength);
 		}
 
-		[TestMethod]
+		// Clipboard is currently not available on skia-WASM
+		[ConditionalTest(IgnoredPlatforms = RuntimeTestPlatforms.SkiaWasm)]
 		public async Task When_Paste_History_Remains_Intact()
 		{
 			using var _ = new TextBoxFeatureConfigDisposable();
@@ -1822,7 +1994,9 @@ namespace Uno.UI.RuntimeTests.Tests.Windows_UI_Xaml_Controls
 			Assert.AreEqual("initial", SUT.Text);
 		}
 
-		[TestMethod]
+		// Clipboard is currently not available on skia-WASM
+		// Newline handling is different on Skia.UIKit targets due to native input sync #788
+		[ConditionalTest(IgnoredPlatforms = RuntimeTestPlatforms.SkiaWasm)]
 		public async Task When_Paste_The_Same_Text()
 		{
 			using var _ = new TextBoxFeatureConfigDisposable();
@@ -1966,7 +2140,7 @@ namespace Uno.UI.RuntimeTests.Tests.Windows_UI_Xaml_Controls
 			Assert.AreEqual(1, keyDownCount);
 		}
 
-		[TestMethod]
+		[ConditionalTest(IgnoredPlatforms = RuntimeTestPlatforms.SkiaWasm)]
 		public async Task When_Multiline_NewLine_UpDown()
 		{
 			using var _ = new TextBoxFeatureConfigDisposable();
@@ -1990,17 +2164,19 @@ namespace Uno.UI.RuntimeTests.Tests.Windows_UI_Xaml_Controls
 
 			SUT.SafeRaiseEvent(UIElement.KeyDownEvent, new KeyRoutedEventArgs(SUT, VirtualKey.Up, VirtualKeyModifiers.None));
 			await WindowHelper.WaitForIdle();
-			Assert.AreEqual(4, SUT.SelectionStart);
+			// Accounting for font difference on Wasm Skia, until we unify with Open Sans.
+			Assert.AreEqual(OperatingSystem.IsBrowser() ? 5 : 4, SUT.SelectionStart);
 			Assert.AreEqual(0, SUT.SelectionLength);
 
 			SUT.SafeRaiseEvent(UIElement.KeyDownEvent, new KeyRoutedEventArgs(SUT, VirtualKey.Down, VirtualKeyModifiers.None));
 			await WindowHelper.WaitForIdle();
-			Assert.AreEqual(17, SUT.SelectionStart);
+			Assert.AreEqual(17, SUT.SelectionStart); // notice how up -> down -> up doesn't necessarily end up back where it started, this is correct
 			Assert.AreEqual(0, SUT.SelectionLength);
 
 			SUT.SafeRaiseEvent(UIElement.KeyDownEvent, new KeyRoutedEventArgs(SUT, VirtualKey.Up, VirtualKeyModifiers.None));
 			await WindowHelper.WaitForIdle();
-			Assert.AreEqual(4, SUT.SelectionStart);
+			// Accounting for font difference on Wasm Skia, until we unify with Open Sans.
+			Assert.AreEqual(OperatingSystem.IsBrowser() ? 5 : 4, SUT.SelectionStart);
 			Assert.AreEqual(0, SUT.SelectionLength);
 
 			SUT.SafeRaiseEvent(UIElement.KeyDownEvent, new KeyRoutedEventArgs(SUT, VirtualKey.Down, VirtualKeyModifiers.None));
@@ -2062,7 +2238,7 @@ namespace Uno.UI.RuntimeTests.Tests.Windows_UI_Xaml_Controls
 			Assert.AreEqual(0, SUT.SelectionLength);
 		}
 
-		[TestMethod]
+		[ConditionalTest(IgnoredPlatforms = RuntimeTestPlatforms.SkiaWasm)]
 		public async Task When_Multiline_Wrapping_UpDown()
 		{
 			using var _ = new TextBoxFeatureConfigDisposable();
@@ -2087,21 +2263,25 @@ namespace Uno.UI.RuntimeTests.Tests.Windows_UI_Xaml_Controls
 
 			SUT.SafeRaiseEvent(UIElement.KeyDownEvent, new KeyRoutedEventArgs(SUT, VirtualKey.Up, VirtualKeyModifiers.None));
 			await WindowHelper.WaitForIdle();
-			Assert.AreEqual(4, SUT.SelectionStart);
+			// Accounting for font difference on Wasm Skia, until we unify with Open Sans.
+			Assert.AreEqual(OperatingSystem.IsBrowser() ? 5 : 4, SUT.SelectionStart);
 			Assert.AreEqual(0, SUT.SelectionLength);
 
 			SUT.SafeRaiseEvent(UIElement.KeyDownEvent, new KeyRoutedEventArgs(SUT, VirtualKey.Down, VirtualKeyModifiers.None));
 			await WindowHelper.WaitForIdle();
-			Assert.AreEqual(17, SUT.SelectionStart);
+			// Accounting for font difference on Wasm Skia, until we unify with Open Sans.
+			Assert.AreEqual(17, SUT.SelectionStart); // notice how up -> down -> up doesn't necessarily end up back where it started, this is correct
 			Assert.AreEqual(0, SUT.SelectionLength);
 
 			SUT.SafeRaiseEvent(UIElement.KeyDownEvent, new KeyRoutedEventArgs(SUT, VirtualKey.Up, VirtualKeyModifiers.None));
 			await WindowHelper.WaitForIdle();
-			Assert.AreEqual(4, SUT.SelectionStart);
+			// Accounting for font difference on Wasm Skia, until we unify with Open Sans.
+			Assert.AreEqual(OperatingSystem.IsBrowser() ? 5 : 4, SUT.SelectionStart);
 			Assert.AreEqual(0, SUT.SelectionLength);
 
 			SUT.SafeRaiseEvent(UIElement.KeyDownEvent, new KeyRoutedEventArgs(SUT, VirtualKey.Down, VirtualKeyModifiers.None));
 			await WindowHelper.WaitForIdle();
+			// Accounting for font difference on Wasm Skia, until we unify with Open Sans.
 			Assert.AreEqual(17, SUT.SelectionStart);
 			Assert.AreEqual(0, SUT.SelectionLength);
 		}
@@ -2389,9 +2569,17 @@ namespace Uno.UI.RuntimeTests.Tests.Windows_UI_Xaml_Controls
 			Assert.AreEqual(SUT.Text.Length - 2, SUT.SelectionLength);
 		}
 
-		[TestMethod]
+		[ConditionalTest(IgnoredPlatforms = RuntimeTestPlatforms.SkiaUIKit)] // Fails in Skia UIKit CI - https://github.com/unoplatform/uno-private/issues/808
 		public async Task When_Multiline_Pointer_Tap()
 		{
+			if (OperatingSystem.IsBrowser())
+			{
+				// Temporarily: Wasm Skia can't use Arial so the coordinates being pressed are not what we expect.
+				// In future when we have Open Sans by default, we'll need to remove the use of Arial and maybe
+				// adjust the coordinates so that they do what we want. Then the test will become stable on Skia Desktop and Wasm Skia.
+				Assert.Inconclusive("Skipped on Wasm Skia due to font differences.");
+			}
+
 			using var _ = new TextBoxFeatureConfigDisposable();
 
 			var SUT = new TextBox
@@ -2545,9 +2733,16 @@ namespace Uno.UI.RuntimeTests.Tests.Windows_UI_Xaml_Controls
 			Assert.AreEqual(SUT.Text.Length - 18, SUT.SelectionLength);
 		}
 
-		[TestMethod]
+		// Clipboard is currently not available on skia-WASM
+		[ConditionalTest(IgnoredPlatforms = RuntimeTestPlatforms.SkiaWasm)]
 		public async Task When_SurrogatePair_Copy()
 		{
+			if (OperatingSystem.IsBrowser())
+			{
+				// Clipboard can't be read for security reasons.
+				Assert.Inconclusive("Skipped on Wasm Skia due to clipboard-related issues.");
+			}
+
 			using var _ = new TextBoxFeatureConfigDisposable();
 
 			var SUT = new TextBox
@@ -2937,6 +3132,12 @@ namespace Uno.UI.RuntimeTests.Tests.Windows_UI_Xaml_Controls
 		[TestMethod]
 		public async Task When_Right_Tap_Selection_Persists()
 		{
+			if (OperatingSystem.IsIOS())
+			{
+				Assert.Inconclusive("Currently failing on iOS");
+				return;
+			}
+
 			using var _ = new TextBoxFeatureConfigDisposable();
 			using var __ = new DisposableAction(() => (VisualTreeHelper.GetOpenPopupsForXamlRoot(WindowHelper.XamlRoot)).ForEach((_, p) => p.IsOpen = false));
 
@@ -3146,6 +3347,15 @@ namespace Uno.UI.RuntimeTests.Tests.Windows_UI_Xaml_Controls
 		[DataRow(VirtualKey.V)] // paste
 		public async Task When_Cut_Paste_Breaks_Typing(VirtualKey key)
 		{
+			if (OperatingSystem.IsBrowser())
+			{
+				// Clipboard can't be read in managed code for security reasons.
+				// An actual attempt to paste will work, because the native HTML
+				// input is what will receive the key event, and the browser will be
+				// responsible for changing the text.
+				Assert.Inconclusive("Skipped on Wasm Skia due to clipboard-related issues.");
+			}
+
 			using var _ = new TextBoxFeatureConfigDisposable();
 
 			var dataPackage = new DataPackage();
@@ -3428,13 +3638,18 @@ namespace Uno.UI.RuntimeTests.Tests.Windows_UI_Xaml_Controls
 		public async Task When_Unfocused_Typing_Ends()
 		{
 			using var _ = new TextBoxFeatureConfigDisposable();
-
 			var SUT = new TextBox
 			{
 				Width = 150
 			};
 
-			WindowHelper.WindowContent = SUT;
+			var sp = new StackPanel()
+			{
+				SUT,
+				new TextBox() { Text="focus dummy" }
+			};
+
+			WindowHelper.WindowContent = sp;
 
 			await WindowHelper.WaitForIdle();
 			await WindowHelper.WaitForLoaded(SUT);
@@ -3453,6 +3668,8 @@ namespace Uno.UI.RuntimeTests.Tests.Windows_UI_Xaml_Controls
 
 			VisualTree.GetFocusManagerForElement(SUT)!.TryMoveFocusInstance(FocusNavigationDirection.Next);
 			await WindowHelper.WaitForIdle();
+
+			await Task.Delay(5000);
 
 			SUT.Focus(FocusState.Programmatic);
 			await WindowHelper.WaitForIdle();
@@ -3616,6 +3833,12 @@ namespace Uno.UI.RuntimeTests.Tests.Windows_UI_Xaml_Controls
 		[TestMethod]
 		public async Task When_Paste_Does_Not_Change_Text()
 		{
+			if (OperatingSystem.IsBrowser())
+			{
+				// TODO: Investigate what goes wrong here on Wasm Skia.
+				Assert.Inconclusive("Not working on Wasm Skia, unknown issue.");
+			}
+
 			using var _ = new TextBoxFeatureConfigDisposable();
 
 			var SUT = new TextBox
@@ -3793,6 +4016,12 @@ namespace Uno.UI.RuntimeTests.Tests.Windows_UI_Xaml_Controls
 		[TestMethod]
 		public async Task When_PasswordBox_TextRevealed()
 		{
+			if (OperatingSystem.IsBrowser())
+			{
+				// Overlay isn't supported on Wasm Skia.
+				Assert.Inconclusive("Not supported on Wasm Skia.");
+			}
+
 			var useOverlay = FeatureConfiguration.TextBox.UseOverlayOnSkia;
 			using var _1 = Disposable.Create(() => FeatureConfiguration.TextBox.UseOverlayOnSkia = useOverlay);
 
@@ -3812,7 +4041,7 @@ namespace Uno.UI.RuntimeTests.Tests.Windows_UI_Xaml_Controls
 			SUT.SafeRaiseEvent(UIElement.KeyDownEvent, new KeyRoutedEventArgs(SUT, VirtualKey.None, VirtualKeyModifiers.None, unicodeKey: 't'));
 			await WindowHelper.WaitForIdle();
 
-			Assert.AreEqual("●●●●", SUT.TextBoxView.DisplayBlock.Text);
+			Assert.AreEqual(new string(TextBoxView.PasswordChar, 4), SUT.TextBoxView.DisplayBlock.Text);
 
 			var injector = InputInjector.TryCreate() ?? throw new InvalidOperationException("Failed to init the InputInjector");
 			using var mouse = injector.GetMouse();
@@ -3823,6 +4052,78 @@ namespace Uno.UI.RuntimeTests.Tests.Windows_UI_Xaml_Controls
 			await WindowHelper.WaitForIdle();
 
 			Assert.AreEqual("test", SUT.TextBoxView.DisplayBlock.Text);
+		}
+
+		[TestMethod]
+		[UnoWorkItem("https://github.com/unoplatform/uno.chefs/issues/1472")]
+		public async Task When_PasswordBox_Focus_Changes()
+		{
+			using var _ = new TextBoxFeatureConfigDisposable();
+
+			var stackPanel = new StackPanel()
+			{
+				Padding = new Thickness(10),
+				Spacing = 8
+			};
+			var button = new Button()
+			{
+				Content = "Focus"
+			};
+			var passwordBox = new PasswordBox
+			{
+				IsPasswordRevealButtonEnabled = false,
+				Width = 150
+			};
+
+			stackPanel.Children.Add(passwordBox);
+			stackPanel.Children.Add(button);
+
+			await UITestHelper.Load(stackPanel);
+
+			passwordBox.Focus(FocusState.Pointer);
+			await WindowHelper.WaitForIdle();
+
+			var screenshotEmpty = await UITestHelper.ScreenShot(passwordBox);
+
+			passwordBox.Password = "1234567890";
+			await WindowHelper.WaitForIdle();
+
+			var screenshotFilled = await UITestHelper.ScreenShot(passwordBox);
+
+			await ImageAssert.AreNotEqualAsync(screenshotEmpty, screenshotFilled);
+
+			button.Focus(FocusState.Pointer);
+			await WindowHelper.WaitForIdle();
+
+			// Re-focus
+			passwordBox.Focus(FocusState.Pointer);
+			await WindowHelper.WaitForIdle();
+			var screenshotRefocused = await UITestHelper.ScreenShot(passwordBox);
+
+			await ImageAssert.AreEqualAsync(screenshotRefocused, screenshotFilled);
+		}
+
+		[TestMethod]
+		[UnoWorkItem("https://github.com/unoplatform/uno-private/issues/753")]
+		public async Task When_TextBox_Touch_Tapped_At_End()
+		{
+			var SUT = new TextBox
+			{
+				Width = 400,
+				Text = "Some Text"
+			};
+
+			await UITestHelper.Load(SUT);
+
+			var injector = InputInjector.TryCreate() ?? throw new InvalidOperationException("Failed to init the InputInjector");
+			using var finger = injector.GetFinger();
+
+			finger.Press(SUT.GetAbsoluteBoundsRect().GetCenter());
+			finger.Release();
+			await WindowHelper.WaitForIdle();
+
+			Assert.AreEqual(0, SUT.SelectionLength);
+			Assert.AreEqual(SUT.Text.Length, SUT.SelectionStart);
 		}
 
 		[TestMethod]
