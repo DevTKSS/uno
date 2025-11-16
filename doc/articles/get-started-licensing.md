@@ -196,7 +196,7 @@ If you encounter issues during the subscription or licensing process:
    - Visit [platform.uno/select-subscription](https://platform.uno/select-subscription/) to upgrade
 
 1. **Support**:
-   - Pro support covers Uno Platform Studio features only
+   - **Pro License** support covers Uno Platform Studio features only
    - For general support, visit [GitHub Discussions](https://github.com/unoplatform/uno/discussions) or [Discord](https://www.platform.uno/discord)
    - [Paid support](https://platform.uno/contact/) available for enterprise needs
 
