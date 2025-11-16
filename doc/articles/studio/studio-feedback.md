@@ -51,6 +51,15 @@ Refer to the image below for guidance:
 
 For further assistance, visit our [Discord Server](https://platform.uno/uno-discord), where our engineering team and community will be happy to assist you.
 
+Overview and Quick Links to Uno Platform Studio specific Uno Discord Channels:
+- [Hot Design](https://discord.com/channels/1182775715242967050/1331697570224799915)
+- [MCP & Hot Design Agent Tooling (AI)](https://discord.com/channels/1182775715242967050/1438250213478367303)
+- [Hot Reload](https://discord.com/channels/1182775715242967050/1438581637829890069)
+- [Design-to-Code (Uno Figma)](https://discord.com/channels/1182775715242967050/1195013693482729562)
+
+> [!NOTE]
+> The Links above will only work after joining the Uno Platform Discord Server.
+
 For organizations seeking a deeper level of support beyond our community support, please [contact us](https://platform.uno/contact).
 
 We look forward to your feedback and thank you for helping us improve Uno Platform Studio and its tools!

@@ -197,7 +197,18 @@ If you encounter issues during the subscription or licensing process:
 
 1. **Support**:
    - **Pro License** support covers Uno Platform Studio features only
-   - For general support, visit [GitHub Discussions](https://github.com/unoplatform/uno/discussions) or [Discord](https://www.platform.uno/discord)
+   - For general support, visit :
+     - [GitHub Discussions](https://github.com/unoplatform/uno/discussions)
+     - [Discord](https://www.platform.uno/discord)
+      **Uno Platform Studio specific Channels:**
+      - [Hot Design](https://discord.com/channels/1182775715242967050/1331697570224799915)
+      - [MCP & Hot Design Agent Tooling (AI)](https://discord.com/channels/1182775715242967050/1438250213478367303)
+      - [Hot Reload](https://discord.com/channels/1182775715242967050/1438581637829890069)
+      - [Design-to-Code (Uno Figma)](https://discord.com/channels/1182775715242967050/1195013693482729562)
+      
+        > [!NOTE]
+        > The Channel Links above will only work after joining the Discord Server.
+
    - [Paid support](https://platform.uno/contact/) available for enterprise needs
 
 ## Questions
